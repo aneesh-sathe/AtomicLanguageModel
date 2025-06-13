@@ -1,6 +1,6 @@
-import tiktoken
 import torch
 from torch.utils.data import DataLoader, Dataset
+from transformers import AutoTokenizer
 
 
 class GPTDatasetV1(Dataset):
@@ -27,7 +27,7 @@ class GPTDatasetV1(Dataset):
         return self.input_ids[idx], self.target_ids[idx]
 
 
-def create_dataloader_v1(
+def create_dataloader(
     txt,
     batch_size=4,
     max_length=256,
@@ -37,7 +37,9 @@ def create_dataloader_v1(
     num_workers=0,
 ):
     # Initialize the tokenizer
-    tokenizer = tiktoken.get_encoding("gpt2")
+    tokenizer = AutoTokenizer.from_pretrained(
+        "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
+    )
 
     # Create dataset
     dataset = GPTDatasetV1(txt, tokenizer, max_length, stride)
@@ -52,3 +54,13 @@ def create_dataloader_v1(
     )
 
     return dataloader
+
+
+def get_marathi_corpus_stats(text="../dataset/marathi_pretrain.txt"):
+    tokenizer = AutoTokenizer.from_pretrained(
+        "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
+    )
+    with open(text, "r") as file:
+        r = file.read()
+        print("pretrain corpus length: ", len(r))
+        print("pretrain tokens: ", len(tokenizer.encode(r)))
