@@ -9,7 +9,7 @@ class GPTDatasetV1(Dataset):
         self.target_ids = []
 
         # Tokenize the entire text
-        token_ids = tokenizer.encode(txt, allowed_special={"<|endoftext|>"})
+        token_ids = tokenizer.encode(txt)
         assert len(token_ids) > max_length, (
             "Number of tokenized inputs must at least be equal to max_length+1"
         )
@@ -56,11 +56,10 @@ def create_dataloader(
     return dataloader
 
 
-def get_marathi_corpus_stats(text="../dataset/marathi_pretrain.txt"):
+def get_corpus_stats(text):
     tokenizer = AutoTokenizer.from_pretrained(
         "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
     )
-    with open(text, "r") as file:
-        r = file.read()
-        print("pretrain corpus length: ", len(r))
-        print("pretrain tokens: ", len(tokenizer.encode(r)))
+
+    print("pretrain corpus length: ", len(text))
+    print("pretrain tokens: ", len(tokenizer.encode(text)))

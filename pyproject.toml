@@ -9,6 +9,7 @@ dependencies = [
     "matplotlib>=3.10.3",
     "nbimporter>=0.3.4",
     "numpy>=2.2.6",
+    "sentencepiece>=0.2.0",
     "tiktoken>=0.9.0",
     "torch>=2.7.0",
     "transformers>=4.52.4",

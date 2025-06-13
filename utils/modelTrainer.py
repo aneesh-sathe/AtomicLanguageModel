@@ -6,7 +6,7 @@ from utils.decoder import generate_topk_out_tokens, text_to_token, token_to_text
 
 def get_train_test_split(text, split):
     assert split <= 1, "split cannot be greater than 1"
-    split_idx = len(text) * split
+    split_idx = int(len(text) * split)
     train = text[:split_idx]
     test = text[split_idx:]
 
@@ -108,7 +108,7 @@ def gpt_trainer(
                 print(f" epoch : {epoch}    step: {global_step}")
                 print(f" train loss: {train_loss}   val loss: {val_loss}")
 
-                if val_loss < val_losses[-1]:
+                if val_losses and val_loss < val_losses[-1]:
                     torch.save(
                         {
                             "epoch": epoch,

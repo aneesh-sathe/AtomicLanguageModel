@@ -1,5 +1,9 @@
 import torch
 from torch import nn
+from transformers import AutoTokenizer
+
+from utils.modelTrainer import get_train_test_split, gpt_trainer
+from utils.textProcessor import create_dataloader, get_corpus_stats
 
 GPT_CONFIG_124M = {
     "vocab_size": 50257,
@@ -10,6 +14,11 @@ GPT_CONFIG_124M = {
     "drop_rate": 0.1,
     "qkv_bias": False,
 }
+
+PRETRAIN_CORPUS = "dataset/marathi_pretrain.txt"
+tokenizer = AutoTokenizer.from_pretrained(
+    "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
+)
 
 
 class MultiHeadAttention(nn.Module):
@@ -181,3 +190,68 @@ def get_model_stats():
     total_size_bytes = total_params * 4
     total_size_mb = total_size_bytes / (1024 * 1024)
     print(f"Total size of the model: {total_size_mb:.2f} MB")
+
+
+with open(PRETRAIN_CORPUS, "r") as file:
+    text = file.read()
+
+text = text[:35000]
+get_corpus_stats(text)
+
+train_data, val_data = get_train_test_split(text, 0.75)
+
+train_data_loader = create_dataloader(
+    txt=train_data,
+    batch_size=2,
+    max_length=GPT_CONFIG_124M["context_length"],
+    stride=GPT_CONFIG_124M["context_length"],
+    shuffle=True,
+    drop_last=True,
+    num_workers=0,
+)
+
+val_data_loader = create_dataloader(
+    txt=val_data,
+    batch_size=2,
+    max_length=GPT_CONFIG_124M["context_length"],
+    stride=GPT_CONFIG_124M["context_length"],
+    shuffle=True,
+    drop_last=False,
+    num_workers=0,
+)
+
+
+print("----- training set -----")
+for x, y in train_data_loader:
+    print(x.shape, y.shape)
+print("----- validation set -----")
+for x, y in val_data_loader:
+    print(x.shape, y.shape)
+
+
+"""device = "mps" if torch.mps.is_available() else "cpu"
+with torch.no_grad():
+    train_loss = batch_loss(model=gpt, data_loader=train_data_loader, device=device)
+    val_loss = batch_loss(model=gpt, device=device, data_loader=val_data_loader)
+    print(f"train loss: {train_loss}")
+    print(f"val loss: {val_loss}")"""
+
+device = "mps" if torch.mps.is_available() else "cpu"
+gpt = GPTModel(GPT_CONFIG_124M).to(device)
+optimizer = torch.optim.AdamW(gpt.parameters(), weight_decay=0.1, lr=0.0004)
+num_epochs = 100
+start_context = "हॅप्पी बर्थडे भाऊ!"
+
+train_loss, val_loss, tokens_seen = gpt_trainer(
+    model=gpt,
+    train_loader=train_data_loader,
+    val_loader=val_data_loader,
+    optimizer=optimizer,
+    num_epochs=num_epochs,
+    eval_freq=5,
+    eval_iter=5,
+    start_context=start_context,
+    tokenizer=tokenizer,
+    device=device,
+    cfg=GPT_CONFIG_124M,
+)
