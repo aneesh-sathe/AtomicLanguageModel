@@ -195,14 +195,14 @@ def get_model_stats():
 with open(PRETRAIN_CORPUS, "r") as file:
     text = file.read()
 
-text = text[:35000]
+text = text[:300000]
 get_corpus_stats(text)
 
 train_data, val_data = get_train_test_split(text, 0.75)
 
 train_data_loader = create_dataloader(
     txt=train_data,
-    batch_size=2,
+    batch_size=4,
     max_length=GPT_CONFIG_124M["context_length"],
     stride=GPT_CONFIG_124M["context_length"],
     shuffle=True,
@@ -212,7 +212,7 @@ train_data_loader = create_dataloader(
 
 val_data_loader = create_dataloader(
     txt=val_data,
-    batch_size=2,
+    batch_size=4,
     max_length=GPT_CONFIG_124M["context_length"],
     stride=GPT_CONFIG_124M["context_length"],
     shuffle=True,
