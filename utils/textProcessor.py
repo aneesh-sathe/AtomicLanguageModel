@@ -35,11 +35,9 @@ def create_dataloader(
     shuffle=True,
     drop_last=True,
     num_workers=0,
+    tokenizer
 ):
     # Initialize the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(
-        "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
-    )
 
     # Create dataset
     dataset = GPTDatasetV1(txt, tokenizer, max_length, stride)
