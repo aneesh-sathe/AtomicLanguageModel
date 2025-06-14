@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from transformers import GPT2TokenizerFast
+from transformers import AutoTokenizer
 
 from utils.makePlots import plot_metrics
 from utils.modelTrainer import get_train_test_split, gpt_trainer
@@ -19,7 +19,7 @@ GPT_CONFIG_124M = {
 PRETRAIN_CORPUS = "dataset/marathi_pretrain.txt"
 INSTRUCTION_CORPUS = "dataset/instructions.json"
 
-tokenizer = GPT2TokenizerFast.from_pretrained(
+""" tokenizer = GPT2TokenizerFast.from_pretrained(
     "marathi_tokenizer",
     unk_token="<unk>",
     pad_token="<pad>",
@@ -29,6 +29,10 @@ tokenizer = GPT2TokenizerFast.from_pretrained(
 
 tokenizer.add_special_tokens(
     {"additional_special_tokens": ["### सूचना:", "### उत्तर:", "### इनपुट:"]}
+) """
+
+tokenizer = AutoTokenizer.from_pretrained(
+    "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
 )
 
 
@@ -262,12 +266,15 @@ train_loss, val_loss, tokens_seen = gpt_trainer(
     val_loader=val_data_loader,
     optimizer=optimizer,
     num_epochs=num_epochs,
-    eval_freq=5,
-    eval_iter=5,
+    eval_freq=10,
+    eval_iter=10,
     start_context=start_context,
     tokenizer=tokenizer,
     device=device,
     cfg=GPT_CONFIG_124M,
+    new_tokens=50,
+    temperature=1,
+    k=3,
 )
 
 

@@ -45,13 +45,20 @@ def batch_loss(data_loader, model, device, num_batches=None):
     return total_loss / num_batches
 
 
-def sample_batch(model, tokenizer, start_context, device, cfg):
+def sample_batch(
+    model, tokenizer, start_context, device, new_tokens, temperature, k, cfg
+):
     model.eval()
     context_length = cfg["context_length"]
     tokens = text_to_token(start_context, tokenizer).to(device)
     with torch.no_grad():
         token_ids = generate_topk_out_tokens(
-            model=model, idx=tokens, context_length=context_length, new_tokens=50
+            model=model,
+            idx=tokens,
+            context_length=context_length,
+            new_tokens=new_tokens,
+            temperature=temperature,
+            k=k,
         )
     text = token_to_text(token_ids, tokenizer)
     print(text.replace("/n", " "))
@@ -80,6 +87,9 @@ def gpt_trainer(
     start_context,
     tokenizer,
     cfg,
+    new_tokens,
+    temperature,
+    k,
 ):
     train_losses, val_losses, track_tokens = [], [], []
     tokens_seen, global_step = 0, -1
@@ -123,6 +133,8 @@ def gpt_trainer(
                 train_losses.append(train_loss)
                 val_losses.append(val_loss)
 
-        sample_batch(model, tokenizer, start_context, device, cfg)
+        sample_batch(
+            model, tokenizer, start_context, device, new_tokens, temperature, k, cfg
+        )
 
     return train_losses, val_losses, track_tokens
