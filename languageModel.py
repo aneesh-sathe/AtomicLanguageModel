@@ -1,7 +1,8 @@
 import torch
 from torch import nn
-from transformers import AutoTokenizer
+from transformers import GPT2TokenizerFast
 
+from utils.makePlots import plot_metrics
 from utils.modelTrainer import get_train_test_split, gpt_trainer
 from utils.textProcessor import create_dataloader, get_corpus_stats
 
@@ -16,8 +17,18 @@ GPT_CONFIG_124M = {
 }
 
 PRETRAIN_CORPUS = "dataset/marathi_pretrain.txt"
-tokenizer = AutoTokenizer.from_pretrained(
-    "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
+INSTRUCTION_CORPUS = "dataset/instructions.json"
+
+tokenizer = GPT2TokenizerFast.from_pretrained(
+    "marathi_tokenizer",
+    unk_token="<unk>",
+    pad_token="<pad>",
+    bos_token="<s>",
+    eos_token="</s>",
+)
+
+tokenizer.add_special_tokens(
+    {"additional_special_tokens": ["### सूचना:", "### उत्तर:", "### इनपुट:"]}
 )
 
 
@@ -43,16 +54,19 @@ class MultiHeadAttention(nn.Module):
         values = self.W_value(x)
         queries = self.W_query(x)
 
-        keys = keys.view(b, num_tokens, self.num_heads, self.head_dim).transpose(
-            1, 2
-        )  # splitting the matrix in order to
+        """
+
+        splitting the matrix in order to generate (B, NUM_HEADS) independent
+        matrices of size (NUM_TOKENS, HEAD_DIM) for parallel computation of attention scores
+        
+        """
+        keys = keys.view(b, num_tokens, self.num_heads, self.head_dim).transpose(1, 2)
         values = values.view(b, num_tokens, self.num_heads, self.head_dim).transpose(
             1, 2
-        )  # generate (B, NUM_HEADS) independent
+        )
         queries = queries.view(b, num_tokens, self.num_heads, self.head_dim).transpose(
             1, 2
-        )  # matrices of size (NUM_TOKENS,
-        # HEAD_DIM) for parallel computation
+        )
 
         attn_scores = queries @ keys.transpose(2, 3)
         mask = torch.triu(
@@ -254,4 +268,12 @@ train_loss, val_loss, tokens_seen = gpt_trainer(
     tokenizer=tokenizer,
     device=device,
     cfg=GPT_CONFIG_124M,
+)
+
+
+plot_metrics(
+    tokens_seen=tokens_seen,
+    train_loss=train_loss,
+    val_loss=val_loss,
+    num_epochs=num_epochs,
 )

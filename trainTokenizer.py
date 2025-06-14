@@ -1,7 +1,7 @@
 import os
 
 import tokenizers
-from transformers import GPT2Tokenizer
+from transformers import GPT2TokenizerFast
 
 
 def train_tokenizer():
@@ -28,13 +28,18 @@ def train_tokenizer():
     tokenizer.save_model("./marathi_tokenizer")
 
 
-tok = GPT2Tokenizer(
-    vocab_file="marathi_tokenizer/vocab.json",
-    merges_file="marathi_tokenizer/merges.txt",
+tok = GPT2TokenizerFast.from_pretrained(
+    "marathi_tokenizer",
     unk_token="<unk>",
     pad_token="<pad>",
     bos_token="<s>",
     eos_token="</s>",
 )
 
+tok.add_special_tokens(
+    {"additional_special_tokens": ["### सूचना:", "### उत्तर:", "### इनपुट:"]}
+)
+
+
 print(tok.decode(tok.encode("खरे तर मी मूळचा मुंबईचाच, तोही गिरगावातला.")))
+print(tok)
