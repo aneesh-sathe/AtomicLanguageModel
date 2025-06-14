@@ -29,13 +29,13 @@ class GPTDatasetV1(Dataset):
 
 def create_dataloader(
     txt,
+    tokenizer,
     batch_size=4,
     max_length=256,
     stride=128,
     shuffle=True,
     drop_last=True,
     num_workers=0,
-    tokenizer
 ):
     # Initialize the tokenizer
 
