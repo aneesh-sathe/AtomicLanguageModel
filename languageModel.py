@@ -2,7 +2,7 @@ import warnings
 
 import torch
 from torch import nn
-from transformers import AutoTokenizer
+from transformers import GPT2TokenizerFast
 
 from utils.makePlots import plot_metrics
 from utils.modelTrainer import get_train_test_split, gpt_trainer
@@ -10,11 +10,12 @@ from utils.textProcessor import create_dataloader, get_corpus_stats
 
 warnings.filterwarnings("ignore")
 
-
 # Initialize tokenizer first to get actual vocab size
-tokenizer = AutoTokenizer.from_pretrained(
+""" tokenizer = AutoTokenizer.from_pretrained(
     "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
-)
+) """
+
+tokenizer = GPT2TokenizerFast.from_pretrained("marathi_tokenizer")
 
 # Add padding token if it doesn't exist
 if tokenizer.pad_token is None:

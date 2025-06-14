@@ -49,12 +49,14 @@ def train_tokenizer():
         }""")
 
 
-tok = GPT2TokenizerFast.from_pretrained("marathi_tokenizer")
+train_tokenizer()
+tokenizer = GPT2TokenizerFast.from_pretrained("marathi_tokenizer")
+print(tokenizer.pad_token)
 
 
 print(
     len(
-        tok.encode(
+        tokenizer.encode(
             "वारशानुसार राष्ट्रीय सूचीबद्ध इमारत म्हणून नियुक्त आहे की नाही हे दर्शवते. काही प्रकरणांमध्ये, अतिरिक्त माहिती तिरस्करणीत दिली जाते. ही यादी हेरिटेज गेटवे संकेतस्थळाद्वारे उपलब्ध असलेल्या ऐतिहासिक पर्यावरणीय नोंदींच्या शोधावर आधारित आहे."
         )
     )
