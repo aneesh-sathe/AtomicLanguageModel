@@ -29,7 +29,7 @@ class GPTDatasetV1(Dataset):
 
 def create_dataloader(
     txt,
-    tokenizer,
+    tokenizer, 
     batch_size=4,
     max_length=256,
     stride=128,

@@ -316,7 +316,7 @@ def main():
     )
 
     # Training parameters
-    num_epochs = 5
+    num_epochs = 100
     start_context = "हॅप्पी बर्थडे भाऊ!"
 
     print(f"\nStarting training for {num_epochs} epochs...")
