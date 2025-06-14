@@ -6,7 +6,7 @@ from utils.modelTrainer import get_train_test_split, gpt_trainer
 from utils.textProcessor import create_dataloader, get_corpus_stats
 
 GPT_CONFIG_124M = {
-    "vocab_size": 50257,
+    "vocab_size": 64000,
     "context_length": 1024,
     "emb_dim": 768,
     "n_heads": 12,
