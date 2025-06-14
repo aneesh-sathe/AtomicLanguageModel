@@ -21,14 +21,6 @@ INSTRUCTION_CORPUS = "dataset/instructions.json"
 
 """ tokenizer = GPT2TokenizerFast.from_pretrained(
     "marathi_tokenizer",
-    unk_token="<unk>",
-    pad_token="<pad>",
-    bos_token="<s>",
-    eos_token="</s>",
-)
-
-tokenizer.add_special_tokens(
-    {"additional_special_tokens": ["### सूचना:", "### उत्तर:", "### इनपुट:"]}
 ) """
 
 tokenizer = AutoTokenizer.from_pretrained(
@@ -257,7 +249,7 @@ with torch.no_grad():
 device = "mps" if torch.mps.is_available() else "cpu"
 gpt = GPTModel(GPT_CONFIG_124M).to(device)
 optimizer = torch.optim.AdamW(gpt.parameters(), weight_decay=0.1, lr=0.0004)
-num_epochs = 100
+num_epochs = 5
 start_context = "हॅप्पी बर्थडे भाऊ!"
 
 train_loss, val_loss, tokens_seen = gpt_trainer(

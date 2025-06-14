@@ -1,0 +1,9 @@
+{
+            "add_prefix_space": true,
+            "model_max_length": 512,
+            "bos_token": "<s>",
+            "eos_token": "</s>",
+            "unk_token": "<unk>",
+            "pad_token": "<pad>",
+            "additional_special_tokens": ["### सूचना:", "### उत्तर:", "### इनपुट:"]
+        }
