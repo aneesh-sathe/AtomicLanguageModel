@@ -32,7 +32,7 @@ GPT_CONFIG_124M = {
     "emb_dim": 768,
     "n_heads": 12,
     "n_layers": 12,
-    "drop_rate": 0.1,
+    "drop_rate": 0.3,
     "qkv_bias": False,
 }
 
@@ -270,26 +270,19 @@ def main():
         batch_size=4,
         max_length=GPT_CONFIG_124M["context_length"],
         stride=GPT_CONFIG_124M["context_length"],
-        shuffle=False,  # Don't shuffle validation data
+        shuffle=False,
         drop_last=False,
         num_workers=0,
-        tokenizer=tokenizer,  # Make sure to pass tokenizer
+        tokenizer=tokenizer,
     )
 
-    # Print data loader info
     print("\n----- Training set -----")
     for i, (x, y) in enumerate(train_data_loader):
-        if i < 3:  # Print first 3 batches
-            print(f"Batch {i}: Input shape {x.shape}, Target shape {y.shape}")
-        if i >= 2:
-            break
+        print(f"Batch {i}: Input shape {x.shape}, Target shape {y.shape}")
 
     print("\n----- Validation set -----")
     for i, (x, y) in enumerate(val_data_loader):
-        if i < 3:  # Print first 3 batches
-            print(f"Batch {i}: Input shape {x.shape}, Target shape {y.shape}")
-        if i >= 2:
-            break
+        print(f"Batch {i}: Input shape {x.shape}, Target shape {y.shape}")
 
     # Initialize model
     print("\nInitializing model...")
@@ -316,7 +309,7 @@ def main():
     )
 
     # Training parameters
-    num_epochs = 1
+    num_epochs = 100
     start_context = "हॅप्पी बर्थडे भाऊ!"
 
     print(f"\nStarting training for {num_epochs} epochs...")

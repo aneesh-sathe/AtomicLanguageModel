@@ -116,9 +116,13 @@ def gpt_trainer(
                 track_tokens.append(tokens_seen)
 
                 print(f" epoch : {epoch}    step: {global_step}")
-                print(f" train loss: {train_loss}   val loss: {val_loss}")
+                print(
+                    f" train loss: {train_loss}   val loss: {val_loss}    tokens seen: {tokens_seen}"
+                )
 
-                if val_losses and val_loss < val_losses[-1]:
+                if val_losses and val_loss < min(
+                    val_losses
+                ):  # only save when val_loss in min till now
                     torch.save(
                         {
                             "epoch": epoch,
@@ -127,6 +131,7 @@ def gpt_trainer(
                             "loss": loss,
                             "train_losses": train_losses,
                             "val_losses": val_losses,
+                            "tokens_seen": track_tokens,
                         },
                         f"checkpoints/checkpoint_{epoch}.pt",
                     )
