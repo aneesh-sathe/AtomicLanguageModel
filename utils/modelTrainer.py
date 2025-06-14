@@ -125,6 +125,8 @@ def gpt_trainer(
                             "model_state_dict": model.state_dict(),
                             "optimizer_state_dict": optimizer.state_dict(),
                             "loss": loss,
+                            "train_losses": train_losses,
+                            "val_losses": val_losses,
                         },
                         f"checkpoints/checkpoint_{epoch}.pt",
                     )
