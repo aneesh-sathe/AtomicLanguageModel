@@ -10,7 +10,7 @@ def train_tokenizer():
 
     tokenizer.train(
         files="dataset/marathi_pretrain.txt",
-        vocab_size=32000,
+        vocab_size=64000,
         min_frequency=2,
         special_tokens=[
             "<s>",
@@ -40,7 +40,7 @@ def train_tokenizer():
     with open("marathi_tokenizer/tokenizer_config.json", "w", encoding="utf-8") as f:
         f.write("""{
             "add_prefix_space": true,
-            "model_max_length": 512,
+            "model_max_length": 1024,
             "bos_token": "<s>",
             "eos_token": "</s>",
             "unk_token": "<unk>",
@@ -51,8 +51,7 @@ def train_tokenizer():
 
 train_tokenizer()
 tokenizer = GPT2TokenizerFast.from_pretrained("marathi_tokenizer")
-print(tokenizer.pad_token)
-
+print(tokenizer.vocab_size)
 
 print(
     len(

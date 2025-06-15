@@ -10,3 +10,5 @@ wheels/
 .venv
 checkpoints
 test.ipynb
+dataset/marathi_pretrain.txt
+

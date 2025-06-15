@@ -15,7 +15,9 @@ warnings.filterwarnings("ignore")
     "ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True
 ) """
 
-tokenizer = GPT2TokenizerFast.from_pretrained("marathi_tokenizer")
+tokenizer = GPT2TokenizerFast.from_pretrained(
+    "marathi_tokenizer", model_max_length=1024
+)
 
 # Add padding token if it doesn't exist
 if tokenizer.pad_token is None:
@@ -241,7 +243,7 @@ def main():
             return
 
     # Limit text size for faster training/testing
-    text = text[:300000]
+    text = text[:1000000]
     print(f"Using {len(text)} characters from corpus")
 
     # Get corpus statistics
@@ -258,18 +260,18 @@ def main():
         txt=train_data,
         batch_size=4,
         max_length=GPT_CONFIG_124M["context_length"],
-        stride=GPT_CONFIG_124M["context_length"],
+        stride=256,
         shuffle=True,
         drop_last=True,
         num_workers=0,
-        tokenizer=tokenizer,  # Make sure to pass tokenizer
+        tokenizer=tokenizer,
     )
 
     val_data_loader = create_dataloader(
         txt=val_data,
         batch_size=4,
         max_length=GPT_CONFIG_124M["context_length"],
-        stride=GPT_CONFIG_124M["context_length"],
+        stride=256,
         shuffle=False,
         drop_last=False,
         num_workers=0,
