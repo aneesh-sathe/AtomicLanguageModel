@@ -11,4 +11,4 @@ wheels/
 checkpoints
 test.ipynb
 dataset/marathi_pretrain.txt
-
+dataset/parquets.zip
